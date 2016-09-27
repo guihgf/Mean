@@ -30,7 +30,12 @@ exports.getById = function(req,res,next){
 		function(post) {
 			if (!post) 
 				return res.status(404).send('Post não encontrado');
-			res.json(post)   
+
+			post.populate('comments', function(err, post) {
+			    if (err) { return next(err); }
+
+			    res.json(post);
+		  	});
 		}, 
 		function(erro) {
 			console.log(erro);
@@ -49,43 +54,51 @@ exports.upVote = function(req,res,next){
 				return res.status(404).send('Post não encontrado');
 			
 			post.upvote(function(err, post){
-			    if (err) { return next(err); }
+				if (err) { return next(err); }
 
-			    res.json(post);
-		    });
+				res.json(post);
+			});
+		}, 
+		function(erro) {
+			console.log(erro);
+			res.status(404).json(erro)
+		}
+		); 
+}
+
+exports.saveComment= function(req,res,next){
+	var _id=req.params.id;
+
+	Post.findById(_id).exec()
+	.then(
+		function(post) {
+			if (!post) 
+				return res.status(404).send('Post não encontrado');
+
+			var comment = new Comment(req.body);
+			comment.post=post;
+
+			comment.save(function(err, comment){
+				if(err){ return next(err); }
+
+				post.comments.push(comment);
+
+				post.save(function(err, post) {
+					if(err){ return next(err); }
+
+					res.json(comment);
+				});
+
+			});  
 		}, 
 		function(erro) {
 			console.log(erro);
 			res.status(404).json(erro)
 		}
 	); 
+
+
 }
 
-exports.saveComment= function(req,res,next){
-	var _id=req.params.id;
 
-	var post=Post.findById(_id).exec();
-
-	if(post){
-		var comment = new Comment(req.body);
-		comment.post=post;
-
-		comment.save(function(err, comment){
-	    	if(err){ return next(err); }
-
-	   		post.comments.push(comment);
-	    	
-	    	post.save(function(err, post) {
-	      	if(err){ return next(err); }
-
-	      		res.json(comment);
-	    	});
-
-	  	});
-
-	}
-	else{
-		res.status(404).send('Post não encontrado');
-	}
-}
 
