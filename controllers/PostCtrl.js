@@ -14,7 +14,6 @@ module.exports = function (app) {
 	};
 
 	controller.save = function(req, res, next) {
-		console.log(req.body);
 		var post = new Post(req.body);
 
 		post.save(function(err, post){
@@ -49,6 +48,8 @@ module.exports = function (app) {
 
 	controller.upVote = function(req,res,next){
 		var _id = req.params.id;
+
+		console.log(req);
 
 		Post.findById(_id).exec()
 		.then(
