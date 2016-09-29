@@ -1,3 +1,5 @@
 precisei instalar o request pra quebrar em controllers:npm install request --save
 nodemon: npm install nodemon -g
 nodemon bin/www
+
+express load: npm install express-load --save

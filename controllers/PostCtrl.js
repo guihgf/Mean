@@ -1,103 +1,107 @@
-var request = require('request');
-var mongoose = require('mongoose');
-var Post = mongoose.model('Post');
-var Comment = mongoose.model('Comment');
+module.exports = function (app) {
 
-exports.list = function(req, res, next) {
-	Post.find(function(err, posts){
-		if(err){ return next(err); }
+	var Post=app.models.Posts;
+	var Comment=app.models.Comments;
 
-		res.json(posts);
-	});
-};
+	var controller={};
 
-exports.save = function(req, res, next) {
-	console.log(req.body);
-	var post = new Post(req.body);
+	controller.list = function(req, res, next) {
+		Post.find(function(err, posts){
+			if(err){ return next(err); }
 
-	post.save(function(err, post){
-		if(err){ return next(err); }
+			return res.json(posts);
+		});
+	};
 
-		res.json(post);
-	});
-};
+	controller.save = function(req, res, next) {
+		console.log(req.body);
+		var post = new Post(req.body);
 
-exports.getById = function(req,res,next){
+		post.save(function(err, post){
+			if(err){ return next(err); }
 
-	var _id = req.params.id;
-	Post.findById(_id).exec()
-	.then(
-		function(post) {
-			if (!post) 
-				return res.status(404).send('Post não encontrado');
+			return res.json(post);
+		});
+	};
 
-			post.populate('comments', function(err, post) {
-			    if (err) { return next(err); }
+	controller.getById = function(req,res,next){
 
-			    res.json(post);
-		  	});
-		}, 
-		function(erro) {
-			console.log(erro);
-			res.status(404).json(erro)
-		}
+		var _id = req.params.id;
+
+		Post.findById(_id).exec()
+		.then(
+			function(post) {
+				if (!post) 
+					return res.status(404).send('Post não encontrado');
+
+				post.populate('comments', function(err, post) {
+				    if (err) { return next(err); }
+
+				    return res.json(post);
+			  	});
+			}, 
+			function(erro) {
+				console.log(erro);
+				return res.status(404).json(erro)
+			}
 		); 
-};
+	};
 
-exports.upVote = function(req,res,next){
-	var _id = req.params.id;
+	controller.upVote = function(req,res,next){
+		var _id = req.params.id;
 
-	Post.findById(_id).exec()
-	.then(
-		function(post) {
-			if (!post) 
-				return res.status(404).send('Post não encontrado');
-			
-			post.upvote(function(err, post){
-				if (err) { return next(err); }
+		Post.findById(_id).exec()
+		.then(
+			function(post) {
+				if (!post) 
+					return res.status(404).send('Post não encontrado');
+				
+				post.upvote(function(err, post){
+					if (err) { return next(err); }
 
-				res.json(post);
-			});
-		}, 
-		function(erro) {
-			console.log(erro);
-			res.status(404).json(erro)
-		}
-		); 
-}
+					return res.json(post);
+				});
+			}, 
+			function(erro) {
+				console.log(erro);
+				res.status(404).json(erro)
+			}
+			); 
+	}
 
-exports.saveComment= function(req,res,next){
-	var _id=req.params.id;
+	controller.saveComment= function(req,res,next){
+		var _id=req.params.id;
 
-	Post.findById(_id).exec()
-	.then(
-		function(post) {
-			if (!post) 
-				return res.status(404).send('Post não encontrado');
+		Post.findById(_id).exec()
+		.then(
+			function(post) {
+				if (!post) 
+					return res.status(404).send('Post não encontrado');
 
-			var comment = new Comment(req.body);
-			comment.post=post;
+				var comment = new Comment(req.body);
+				comment.post=post;
 
-			comment.save(function(err, comment){
-				if(err){ return next(err); }
-
-				post.comments.push(comment);
-
-				post.save(function(err, post) {
+				comment.save(function(err, comment){
 					if(err){ return next(err); }
 
-					res.json(comment);
-				});
+					post.comments.push(comment);
 
-			});  
-		}, 
-		function(erro) {
-			console.log(erro);
-			res.status(404).json(erro)
-		}
-	); 
+					post.save(function(err, post) {
+						if(err){ return next(err); }
 
+						return res.json(comment);
+					});
 
+				});  
+			}, 
+			function(erro) {
+				console.log(erro);
+				return res.status(404).json(erro)
+			}
+		); 
+	}
+
+	return controller;
 }
 
 

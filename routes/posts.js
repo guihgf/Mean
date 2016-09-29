@@ -1,19 +1,19 @@
-var express = require('express');
-var router = express.Router();
-var post = require('../controllers/PostCtrl');
+module.exports=function(app){
 
-router.route('/')
+	var post=app.controllers.PostCtrl;
+	
+	app.route('/posts')
 	.get(post.list)
 	.post(post.save);
 
-router.route('/:id')
-	.get(post.getById);
+	app.route('/posts/:id')
+		.get(post.getById);
 
-router.route('/:id/upvote')
-	.put(post.upVote);
+	app.route('/posts/:id/upvote')
+		.put(post.upVote);
 
-router.route('/:id/comments')
-	.post(post.saveComment);
+	app.route('/posts/:id/comments')
+		.post(post.saveComment);
 
+};
 
-module.exports = router;

@@ -1,15 +1,18 @@
 var mongoose = require('mongoose');
 
-var PostSchema = new mongoose.Schema({
-	title: String,
-	link: String,
-	upvotes: {type: Number, default: 0},
-	comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
-});
+module.exports = function() {
+	var PostSchema = new mongoose.Schema({
+		title: String,
+		link: String,
+		upvotes: {type: Number, default: 0},
+		comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
+	});
 
-PostSchema.methods.upvote=function(cb){
-	this.upvotes+=1;
-	this.save(cb);
+	PostSchema.methods.upvote=function(cb){
+		this.upvotes+=1;
+		this.save(cb);
+	};
+
+	return mongoose.model('Post', PostSchema);
+
 };
-
-mongoose.model('Post', PostSchema);

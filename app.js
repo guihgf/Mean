@@ -1,4 +1,5 @@
 var express = require('express');
+var load = require('express-load');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
@@ -7,16 +8,16 @@ var bodyParser = require('body-parser');
 
 //Mongo
 var mongoose = require('mongoose');
-require('./models/Posts');
-require('./models/Comments');
 
 mongoose.connect('mongodb://localhost/news');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
-var posts = require('./routes/posts');
-
 var app = express();
+
+//configurando express-load
+load('models')
+    .then('controllers')
+    .then('routes')
+    .into(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -29,10 +30,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', routes);
-app.use('/users', users);
-app.use('/posts', posts);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -64,6 +61,7 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
 
 
 module.exports = app;
