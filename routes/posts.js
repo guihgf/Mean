@@ -1,6 +1,12 @@
 module.exports=function(app){
 
 	var post=app.controllers.PostCtrl;
+
+	app.route('/')
+	.get(function(req,res){
+		res.render('index.ejs');
+	});
+	
 	
 	app.route('/posts')
 	.get(post.list)
