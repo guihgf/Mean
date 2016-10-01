@@ -49,8 +49,6 @@ module.exports = function (app) {
 	controller.upVote = function(req,res,next){
 		var _id = req.params.id;
 
-		console.log(req);
-
 		Post.findById(_id).exec()
 		.then(
 			function(post) {
@@ -102,6 +100,29 @@ module.exports = function (app) {
 		); 
 	}
 
+	controller.upVoteComment = function(req,res,next){
+		var _id_post = req.params.id;
+		var _id_comment = req.params.id_comment;
+
+		Comment.findOne({ 'post': _id_post,'_id':_id_comment}).exec()
+		.then(
+			function(comment) {
+				if (!comment) 
+					return res.status(404).send('Comentario não encontrado');
+				
+				comment.upvote(function(err, comment){
+					if (err) { return next(err); }
+
+					return res.json(comment);
+				});
+			}, 
+			function(erro) {
+				console.log(erro);
+				res.status(404).json(erro)
+			}
+		); 
+	}
+	
 	return controller;
 }
 

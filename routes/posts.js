@@ -21,5 +21,8 @@ module.exports=function(app){
 	app.route('/posts/:id/comments')
 		.post(post.saveComment);
 
+	app.route('/posts/:id/comments/:id_comment/upvote')
+		.put(post.upVoteComment);
+
 };
 
