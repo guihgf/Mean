@@ -13,7 +13,7 @@ module.exports=function(app){
 	
 	
 	app.route('/posts')
-	.get(auth,post.list)
+	.get(post.list)
 	.post(auth,post.save);
 
 	app.route('/posts/:id')
