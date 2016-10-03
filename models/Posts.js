@@ -5,7 +5,8 @@ module.exports = function() {
 		title: String,
 		link: String,
 		upvotes: {type: Number, default: 0},
-		comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }]
+		comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
+		author: String
 	});
 
 	PostSchema.methods.upvote=function(cb){

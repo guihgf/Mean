@@ -4,8 +4,11 @@ angular.module('flapperNews').controller('PostCtrl', [
 	'$stateParams',
 	'posts',
 	'post',
-	function($scope, $stateParams, posts, post /*vindo do resolve*/){
+	'auth',
+	function($scope, $stateParams, posts, post, auth){
 		$scope.post = post;
+
+		$scope.isLoggedIn = auth.isLoggedIn;
 
 		$scope.addComment = function(){
 			if($scope.body === '') { return; }
