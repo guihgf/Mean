@@ -5,3 +5,9 @@ nodemon bin/www
 express load: npm install express-load --save
 
 method-override: utilizar, pois PUT e DELETE alguns navegadores não entendem eles
+
+jwt-token: npm install jsonwebtoken --save
+
+passport: npm install passport passport-local --save
+
+express-jwt: npm install express-jwt --save

@@ -16,6 +16,8 @@ module.exports = function (app) {
 	controller.save = function(req, res, next) {
 		var post = new Post(req.body);
 
+		post.author=req.payload.username
+
 		post.save(function(err, post){
 			if(err){ return next(err); }
 
@@ -78,6 +80,7 @@ module.exports = function (app) {
 					return res.status(404).send('Post não encontrado');
 
 				var comment = new Comment(req.body);
+				comment.author = req.payload.username;
 				comment.post=post;
 
 				comment.save(function(err, comment){

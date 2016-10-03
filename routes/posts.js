@@ -1,3 +1,7 @@
+var jwt = require('express-jwt');
+//middleware
+var auth = jwt({secret: 'SECRET', userProperty: 'payload'});
+
 module.exports=function(app){
 
 	var post=app.controllers.PostCtrl;
@@ -9,20 +13,20 @@ module.exports=function(app){
 	
 	
 	app.route('/posts')
-	.get(post.list)
-	.post(post.save);
+	.get(auth,post.list)
+	.post(auth,post.save);
 
 	app.route('/posts/:id')
-		.get(post.getById);
+		.get(auth,post.getById);
 
 	app.route('/posts/:id/upvote')
-		.put(post.upVote);
+		.put(auth,post.upVote);
 
 	app.route('/posts/:id/comments')
-		.post(post.saveComment);
+		.post(auth,post.saveComment);
 
 	app.route('/posts/:id/comments/:id_comment/upvote')
-		.put(post.upVoteComment);
+		.put(auth,post.upVoteComment);
 
 };
 

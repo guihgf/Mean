@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 
 //Mongo
 var mongoose = require('mongoose');
+var passport = require('passport');
 
 mongoose.connect('mongodb://localhost/news');
 
@@ -20,6 +21,8 @@ app.use(require('method-override')());
 
 //configurando express-load
 load('models')
+    .then('models')
+    .then('config')
     .then('controllers')
     .then('routes')
     .into(app);
@@ -33,6 +36,8 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(passport.initialize());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
