@@ -17,7 +17,7 @@ module.exports=function(app){
 	.post(auth,post.save);
 
 	app.route('/posts/:id')
-		.get(auth,post.getById);
+		.get(post.getById);
 
 	app.route('/posts/:id/upvote')
 		.put(auth,post.upVote);
